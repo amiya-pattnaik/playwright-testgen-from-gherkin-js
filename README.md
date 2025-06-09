@@ -402,11 +402,11 @@ Supports a wide range of actions: `setValue`, `click`, `selectDropdown`, `upload
 
 
 ## 📢 Releases and Feedback
-Check out the [Releases](https://github.com/amiya-pattnaik/wdio-testgen-from-gherkin-js/releases) tab for version history and improvements.
+Check out the [Releases](https://github.com/amiya-pattnaik/playwright-testgen-from-gherkin-js/issues/releases) tab for version history and improvements.
 
-Want to discuss features or share feedback? Use [GitHub Discussions](https://github.com/amiya-pattnaik/wdio-testgen-from-gherkin-js/discussions) or open an issue.
+Want to discuss features or share feedback? Use [GitHub Discussions](https://github.com/amiya-pattnaik/playwright-testgen-from-gherkin-js/issues/discussions) or open an issue.
 
 ## 🧑 Author
 **Amiya Pattanaik**
 
-For issues, enhancements or feature requests, [open an issue](https://github.com/amiya-pattnaik/wdio-testgen-from-gherkin-js/issues).
+For issues, enhancements or feature requests, [open an issue](https://github.com/amiya-pattnaik/playwright-testgen-from-gherkin-js/issues).
