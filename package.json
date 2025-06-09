@@ -1,0 +1,62 @@
+{
+  "name": "playwright-testgen-from-gherkin-js",
+  "version": "1.0.0",
+  "description": "Automatically generate Playwright Page Objects and test specs from Gherkin feature files",
+  "author": "Amiya Pattanaik <pattnaik_amiya@yahoo.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "bin": {
+    "testgen": "./testgen.js"
+  },
+  "scripts": {
+    "dev:testgen:steps": "node testgen.js steps",
+    "dev:testgen:tests": "node testgen.js tests",
+    "testgen:run": "node testgen.js run",
+    "allure:generate": "npx allure generate --clean allure-results",
+    "allure:open": "npx allure open -p 5050",
+    "allure:report": "npm run allure:generate && npm run allure:open",
+    "test:unit": "vitest src/__tests__/unit",
+    "dev:test:local": "npx playwright test"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "test generation",
+    "gherkin",
+    "cucumber",
+    "page object model",
+    "testgen"
+  ],
+  "files": [
+    "testgen.js",
+    "vitest.config.js",
+    "index.js",
+    "src/",
+    "features/",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com:amiya-pattnaik/playwright-testgen-from-gherkin-js.git"
+  },
+  "homepage": "https://github.com:amiya-pattnaik/playwright-testgen-from-gherkin-js.git",
+  "dependencies": {
+    "@cucumber/gherkin": "^32.1.2",
+    "chalk": "^5.4.1",
+    "chokidar": "^4.0.3",
+    "commander": "^14.0.0",
+    "compromise": "^14.14.4",
+    "dotenv": "^16.5.0",
+    "fs-extra": "^11.3.0",
+    "glob": "^11.0.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.24",
+    "@wdio/cli": "^9.15.0",
+    "allure-commandline": "^2.34.0",
+    "allure-playwright": "^3.2.2",
+    "prettier": "^3.5.3",
+    "vitest": "^3.2.2"
+  }
+}
