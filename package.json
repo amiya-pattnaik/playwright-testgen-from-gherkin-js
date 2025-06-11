@@ -1,6 +1,6 @@
 {
   "name": "playwright-testgen-from-gherkin-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically generate Playwright Page Objects and test specs from Gherkin feature files",
   "author": "Amiya Pattanaik <pattnaik_amiya@yahoo.com>",
   "license": "MIT",
