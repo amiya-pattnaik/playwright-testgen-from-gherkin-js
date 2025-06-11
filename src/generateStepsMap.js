@@ -176,7 +176,11 @@ function processSteps(opts) {
     if (!fs.existsSync(fullPath)) {
       console.warn(`⚠️ File not found: ${file}`);
     } else {
-      generateStepMap(fullPath, { force: opts.force });
+      generateStepMap(fullPath, {
+        outputPath: opts.outputPath || path.join(process.cwd(), 'stepMaps'),
+        force: opts.force
+      });
+
     }
   });
 
@@ -191,7 +195,12 @@ function processSteps(opts) {
   }
 }
 
-function generateStepMaps({ featuresPath = featureDir, outputPath = stepMapDir, force = true, watch = false }) {
+function generateStepMaps({
+  featuresPath = path.join(process.cwd(), 'features'),
+  outputPath = path.join(process.cwd(), 'stepMaps'),
+  force = true,
+  watch = false
+}) {
   if (!fs.existsSync(outputPath)) fs.mkdirSync(outputPath, { recursive: true });
 
   const files = fs.readdirSync(featuresPath).filter(f => f.endsWith('.feature'));
@@ -211,6 +220,7 @@ function generateStepMaps({ featuresPath = featureDir, outputPath = stepMapDir, 
     console.log('👀 Watching for feature changes...');
   }
 }
+
 
 module.exports = {
   processSteps,

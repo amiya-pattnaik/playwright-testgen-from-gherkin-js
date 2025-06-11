@@ -4,14 +4,10 @@ const chokidar = require('chokidar');
 const { generateShortName, buildActionLine, buildLocatorChain } = require('./utils');
 const { stepMapDir, pageObjectDir, specDir } = require('./config');
 
-// 👇 Generate base Page class for Playwright
-// const { pageObjectDir } = require('./config');
-
-function ensureBasePageClass() {
-  const baseClassPath = path.join(pageObjectDir, 'page.js');
+function ensureBasePageClass(outputDir) {
+  const baseClassPath = path.join(outputDir, 'page.js');
 
   if (!fs.existsSync(baseClassPath)) {
-
     const content = `require('dotenv').config();
 
 class Page {
@@ -44,14 +40,11 @@ class Page {
 
 module.exports = Page;`;
 
-
-
     fs.mkdirSync(path.dirname(baseClassPath), { recursive: true });
     fs.writeFileSync(baseClassPath, content, 'utf-8');
     console.log('✅ Created base Page class for Playwright');
   }
 }
-
 
 function extractPathSegment(stepMap, fallback) {
   for (const steps of Object.values(stepMap)) {
@@ -78,14 +71,9 @@ function generateCodeFromStepMap(file, stepMap, opts) {
     for (const step of steps) {
       const methodName = step.selectorName;
       if (!usedSelectors.has(methodName)) {
-        usedSelectors.set(methodName, {
-          methodName,
-          //selectors: [step.selector, ...(Array.isArray(step.fallbackSelector) ? step.fallbackSelector : [])]
-          selectors: Array.isArray(step.fallbackSelector)
-          ? step.fallbackSelector
-          : [step.selector]
-
-        });
+        const selectors = [step.selector, ...(Array.isArray(step.fallbackSelector) ? step.fallbackSelector : [])]
+          .filter((v, i, a) => a.indexOf(v) === i);
+        usedSelectors.set(methodName, { methodName, selectors });
       }
     }
   }
@@ -119,6 +107,11 @@ function generateCodeFromStepMap(file, stepMap, opts) {
     pageLines.push('  }');
   }
 
+  // <-- your new open(pathSegment = ...) logic -->
+  pageLines.push(`  open(pathSegment = '${defaultPath}') {`);
+  pageLines.push(`    return super.open(pathSegment);`);
+  pageLines.push('  }');
+
   pageLines.push('}');
   pageLines.push(`module.exports = ${pageClassName};`);
 
@@ -133,14 +126,12 @@ function generateCodeFromStepMap(file, stepMap, opts) {
     const scenarioMethodName = generateShortName(scenarioName);
     testLines.push(`  test('${scenarioMethodName}', async ({ page }) => {`);
     testLines.push(`    const pageObj = new ${pageClassName}(page);`);
-    testLines.push(`    await pageObj.open('${defaultPath}');`);
+    testLines.push(`    await pageObj.open();`);
     for (const step of steps) {
       const methodName = step.selectorName;
       const actionLine = buildActionLine(`pageObj.${methodName}`, step.action, step.note);
       if (actionLine) testLines.push(`    ${actionLine}`);
     }
-    testLines.push(`    // Or use full scenario:`);
-    testLines.push(`    // await pageObj.${scenarioMethodName}();`);
     testLines.push('  });');
   }
 
@@ -165,10 +156,13 @@ function generateCodeFromStepMap(file, stepMap, opts) {
 }
 
 function processTests(opts) {
-  if (!fs.existsSync(pageObjectDir)) fs.mkdirSync(pageObjectDir, { recursive: true });
-  if (!fs.existsSync(specDir)) fs.mkdirSync(specDir, { recursive: true });
+  const resolvedPageObjectDir = opts.pageObjectDir || pageObjectDir;
+  const resolvedSpecDir = opts.specDir || specDir;
 
-  ensureBasePageClass();
+  if (!fs.existsSync(resolvedPageObjectDir)) fs.mkdirSync(resolvedPageObjectDir, { recursive: true });
+  if (!fs.existsSync(resolvedSpecDir)) fs.mkdirSync(resolvedSpecDir, { recursive: true });
+
+  ensureBasePageClass(resolvedPageObjectDir);
 
   const files = opts.all
     ? fs.readdirSync(stepMapDir).filter(f => f.endsWith('.stepMap.json'))
@@ -188,8 +182,8 @@ function processTests(opts) {
     const stepMap = JSON.parse(fs.readFileSync(fullPath, 'utf-8'));
     generateCodeFromStepMap(file, stepMap, {
       ...opts,
-      pageObjectDir,
-      specDir
+      pageObjectDir: resolvedPageObjectDir,
+      specDir: resolvedSpecDir
     });
   });
 
@@ -204,15 +198,20 @@ function processTests(opts) {
   }
 }
 
-function generateTestSpecs({ stepMapDir: userDir, outputDir = '', dryRun = false, watch = false }) {
-  const targetDir = userDir || stepMapDir;
-  const resolvedPageObjectDir = outputDir ? path.resolve(outputDir, 'pageobjects') : pageObjectDir;
-  const resolvedSpecDir = outputDir ? path.resolve(outputDir, 'specs') : specDir;
+function generateTestSpecs({
+  stepMapDir: userDir,
+  outputDir = path.join(process.cwd(), 'tests'),
+  dryRun = false,
+  watch = false
+}) {
+  const targetDir = userDir || path.join(process.cwd(), 'stepMaps');
+  const resolvedPageObjectDir = path.resolve(outputDir, 'pageobjects');
+  const resolvedSpecDir = path.resolve(outputDir, 'specs');
 
   if (!fs.existsSync(resolvedPageObjectDir)) fs.mkdirSync(resolvedPageObjectDir, { recursive: true });
   if (!fs.existsSync(resolvedSpecDir)) fs.mkdirSync(resolvedSpecDir, { recursive: true });
 
-  ensureBasePageClass();
+  ensureBasePageClass(resolvedPageObjectDir);
 
   const files = fs.readdirSync(targetDir).filter(f => f.endsWith('.stepMap.json'));
 
@@ -222,7 +221,8 @@ function generateTestSpecs({ stepMapDir: userDir, outputDir = '', dryRun = false
     generateCodeFromStepMap(file, stepMap, {
       dryRun,
       pageObjectDir: resolvedPageObjectDir,
-      specDir: resolvedSpecDir
+      specDir: resolvedSpecDir,
+      force: true
     });
   }
 
@@ -233,7 +233,8 @@ function generateTestSpecs({ stepMapDir: userDir, outputDir = '', dryRun = false
         generateCodeFromStepMap(path.basename(filepath), stepMap, {
           dryRun,
           pageObjectDir: resolvedPageObjectDir,
-          specDir: resolvedSpecDir
+          specDir: resolvedSpecDir,
+          force: true
         });
       }
     });

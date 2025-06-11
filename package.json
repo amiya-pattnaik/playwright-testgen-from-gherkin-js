@@ -29,10 +29,8 @@
   ],
   "files": [
     "testgen.js",
-    "vitest.config.js",
     "index.js",
     "src/",
-    "features/",
     "README.md"
   ],
   "repository": {
