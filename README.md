@@ -57,45 +57,14 @@ your-repo/
 
 ## 🚀 CLI Usage
 ```bash
-Option A: Use with npx
+🔹 Option A: # One-time setup
 
-# Step 1: Generate stepMap.json from the .feature files
-npx testgen steps --all
-npx testgen steps --file login.feature
+npm install -g
+npm install -g tsx          # Required for CLI to run with node shebang
+chmod +x testgen.js         # Make CLI executable (Mac/Linux)
+npm link                    # If fails, try: sudo npm link
 
-# Step 2: Generate test code (Page Objects and Mocha Specs) from stepMap.json
-npx testgen tests --all
-npx testgen tests --file login.stepMap.json
-npx testgen tests --file login.stepMap.json --dry-run
-
-# Step 3: Execute tests and generate Allure report
-npm run testgen:run                     # Only runs tests
-npm run testgen:run -- --report         # ⬅️ Runs tests and generate allure report
-npm run testgen:run -- --report-only    # ⬅️ Generate report without rerunning testsbash
-
-Option B: Use with npm scripts
-
-# Step 1: Generate stepMap.json from the .feature files
-npm run dev:testgen:steps -- --all                 
-npm run dev:testgen:steps -- --file login.feature
-
-# Step 2: Generate Page Objects and Mocha Specs from stepMap.json
-npm run dev:testgen:tests -- --all
-npm run dev:testgen:tests -- --file login.stepMap.json
-npm run dev:testgen:tests -- --file login.stepMap.json --dry-run
-
-# Step 3: Execute tests and generate Allure reoprt
-npm run testgen:run                     # Only runs tests
-npm run testgen:run -- --report         # ⬅️ Runs tests and generate allure report
-npm run testgen:run -- --report-only    # ⬅️ Generate report without rerunning testsbash
-
-Option C : Use as a global CLI command
-
-# One-time setup
-chmod +x testgen.ts
-npm link
-npm install -g tsx
-⚠️ Now run from anywhere Requires global tsx installed (npm install -g tsx)
+⚠️ Now run from anywhere
 
 # Step 1: Generate stepMap.json from the .feature files
 testgen steps --all
@@ -109,6 +78,22 @@ testgen tests --file login.stepMap.json --dry-run
 # Step 3: Execute tests and generate Allure report
 testgen run --report        # ⬅️ Runs tests and generate allure report
 testgen run --report-only   # ⬅️ Generate report without rerunning testsbash
+
+🔹 Option B: Local development (without global install)
+
+# Step 1: Generate stepMap.json from the .feature files
+npm run dev:steps:all                 
+npm run dev:steps:file --file features/login.feature
+
+# Step 2: Generate Page Objects and Mocha Specs from stepMap.json
+npm run dev:tests:all       # All stepMaps → PO + specs
+npm run dev:tests:file --file login.stepMap.json
+pm run dev:tests:file --file login.stepMap.json --dry-run
+
+# Step 3: Execute tests and generate Allure reoprt
+npm run test:run                        # Only runs tests
+npm run testgen:run -- --report         # ⬅️ Runs tests and generate allure report
+npm run testgen:run -- --report-only    # ⬅️ Generate report without rerunning testsbash
 ```
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "playwright-testgen-from-gherkin-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Automatically generate Playwright Page Objects and test specs from Gherkin feature files",
   "author": "Amiya Pattanaik <pattnaik_amiya@yahoo.com>",
   "license": "MIT",
@@ -9,14 +9,33 @@
     "testgen": "./testgen.js"
   },
   "scripts": {
-    "dev:testgen:steps": "node testgen.js steps",
-    "dev:testgen:tests": "node testgen.js tests",
-    "testgen:run": "node testgen.js run",
+    "build": "echo 'JS version — no build step needed'",
+    
+    "dev:steps:all": "node testgen.js steps --all",
+    "dev:steps:file": "node testgen.js steps --file",
+    "dev:tests:all": "node testgen.js tests --all",
+    "dev:tests:file": "node testgen.js tests --file",
+    "test:run": "npx playwright test",
+    "test:run:report": "npm run test:run && npm run allure:report",
     "allure:generate": "npx allure generate --clean allure-results",
     "allure:open": "npx allure open -p 5050",
     "allure:report": "npm run allure:generate && npm run allure:open",
     "test:unit": "vitest src/__tests__/unit",
-    "dev:test:local": "npx playwright test"
+    "testgen:run": "node testgen.js run"
+  },
+  "files": [
+    "index.js",
+    "testgen.js",
+    "src/",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amiya-pattnaik/playwright-testgen-from-gherkin-js.git"
+  },
+  "homepage": "https://github.com/amiya-pattnaik/playwright-testgen-from-gherkin-js#readme",
+  "bugs": {
+    "url": "https://github.com/amiya-pattnaik/playwright-testgen-from-gherkin-js/issues"
   },
   "keywords": [
     "playwright",
@@ -27,17 +46,6 @@
     "page object model",
     "testgen"
   ],
-  "files": [
-    "testgen.js",
-    "index.js",
-    "src/",
-    "README.md"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com:amiya-pattnaik/playwright-testgen-from-gherkin-js.git"
-  },
-  "homepage": "https://github.com:amiya-pattnaik/playwright-testgen-from-gherkin-js.git",
   "dependencies": {
     "@cucumber/gherkin": "^32.1.2",
     "chalk": "^5.4.1",
@@ -46,15 +54,23 @@
     "compromise": "^14.14.4",
     "dotenv": "^16.5.0",
     "fs-extra": "^11.3.0",
-    "glob": "^11.0.2"
+    "glob": "^11.0.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0",
-    "@types/node": "^22.15.24",
-    "@wdio/cli": "^9.15.0",
-    "allure-commandline": "^2.34.0",
-    "allure-playwright": "^3.2.2",
-    "prettier": "^3.5.3",
-    "vitest": "^3.2.2"
+    "@playwright/test": "^1.53.1",
+    "@types/node": "^24.0.4",
+    "@wdio/cli": "^9.16.2",
+    "allure-commandline": "^2.34.1",
+    "allure-playwright": "^3.3.0",
+    "prettier": "^3.6.0",
+    "vitest": "^3.2.4"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
